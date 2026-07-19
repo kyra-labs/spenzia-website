@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spenzia — A Simple Expense Tracker (Coming Soon) | Kyra Labs</title>
-  <meta name="description" content="Spenzia is an upcoming Android expense tracker with budgets, categories, spending charts, and recurring bill reminders. Built by Kyra Labs — join the waitlist." />
+  <title>Spenzia — A Simple Expense Tracker (In Development) | Kyra Labs</title>
+  <meta name="description" content="Spenzia is an upcoming open-source, cross-platform expense tracker with budgets, categories, spending charts, and recurring bill reminders. Built by Kyra Labs." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://spenzia.kyralabs.dev/" />
   <meta name="theme-color" content="#d84848" />
   <meta name="author" content="Kyra Labs" />
-  <meta name="keywords" content="Spenzia, expense tracker app, budget app, Android expense tracker, spending tracker, Kyra Labs, personal finance app India" />
+  <meta name="keywords" content="Spenzia, expense tracker app, budget app, cross-platform expense tracker, open-source expense tracker, privacy-focused expense tracker, spending tracker, Kyra Labs, personal finance app India" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Spenzia" />
-  <meta property="og:title" content="Spenzia — A Simple Expense Tracker (Coming Soon)" />
+  <meta property="og:title" content="Spenzia — A Simple Expense Tracker (In Development)" />
   <meta property="og:description" content="Budgets, categories, spending charts, and bill reminders — without the clutter. Built by Kyra Labs." />
   <meta property="og:url" content="https://spenzia.kyralabs.dev/" />
   <meta property="og:image" content="https://spenzia.kyralabs.dev/assets/img/og-image.png" />
@@ -24,22 +24,24 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Spenzia — A Simple Expense Tracker (Coming Soon)" />
+  <meta name="twitter:title" content="Spenzia — A Simple Expense Tracker (In Development)" />
   <meta name="twitter:description" content="Budgets, categories, spending charts, and bill reminders — without the clutter. Built by Kyra Labs." />
   <meta name="twitter:image" content="https://spenzia.kyralabs.dev/assets/img/og-image.png" />
 
   <!-- Icons / PWA -->
-  <link rel="icon" href="/assets/img/favicon.ico" sizes="any" />
-  <link rel="icon" href="/assets/img/favicon-32.png" type="image/png" sizes="32x32" />
-  <link rel="icon" href="/assets/img/favicon-16.png" type="image/png" sizes="16x16" />
-  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="Kyra Labs" />
   <link rel="manifest" href="/site.webmanifest" />
 
   <!-- Fonts -->
+  <link rel="preload" href="/assets/fonts/GoogleSansRounded.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&display=swap"
     rel="stylesheet"
   />
   <link rel="stylesheet" href="/assets/css/style.css" />
@@ -51,9 +53,9 @@
     "@type": "SoftwareApplication",
     "name": "Spenzia",
     "applicationCategory": "FinanceApplication",
-    "operatingSystem": "Android",
+    "operatingSystem": "Web, Android, iOS, Linux, Windows",
     "url": "https://spenzia.kyralabs.dev/",
-    "description": "Spenzia is an expense tracker with budgets, categories, spending charts, and recurring bill reminders.",
+    "description": "Spenzia is an upcoming open-source, cross-platform expense tracker with budgets, categories, spending charts, and recurring bill reminders.",
     "publisher": {
       "@type": "Organization",
       "name": "Kyra Labs",
@@ -74,13 +76,13 @@
   <header class="global-nav">
     <div class="container">
       <a class="back-to-studio" href="https://kyralabs.dev/">
-        <img src="/assets/img/kyra-wordmark.png" alt="" width="70" height="29" />
+        <img src="/assets/img/kyra-wordmark.png" alt="" width="67" height="36" />
         <span>Kyra Labs</span>
       </a>
       <nav class="nav-links" aria-label="Primary">
         <a href="#features">Features</a>
         <a href="#built-by">About</a>
-        <a class="btn btn--primary nav-cta" href="#waitlist">Join waitlist</a>
+        <a class="btn btn--primary nav-cta" href="#waitlist">Get notified</a>
       </nav>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -126,16 +128,16 @@
           </div>
           <div>
             <img class="app-icon-tile" src="/assets/img/icon-192.png" alt="" width="96" height="96" />
-            <span class="eyebrow">Coming soon from Kyra Labs</span>
+            <span class="eyebrow">In development at Kyra Labs</span>
             <h1 class="hero-display">Know where your money goes.</h1>
             <p class="lead" style="margin-left:0;">Spenzia is a straightforward expense tracker — log spending in seconds, keep budgets by category, and see exactly where your month went. No clutter, no subscriptions to track your subscriptions.</p>
             <form class="waitlist-form" data-waitlist-form>
               <label class="visually-hidden" for="hero-email">Email address</label>
               <input class="waitlist-input" id="hero-email" type="email" placeholder="you@example.com" required autocomplete="email" />
-              <button class="btn btn--primary" type="submit">Join waitlist</button>
+              <button class="btn btn--primary" type="submit">Get notified</button>
             </form>
             <div class="form-status" data-form-status role="status" aria-live="polite"></div>
-            <p class="waitlist-note">Be first to try Spenzia. One email at launch — nothing else.</p>
+            <p class="waitlist-note">Spenzia is in development — get notified the day it's ready. One email, nothing else.</p>
           </div>
         </div>
       </div>
@@ -248,12 +250,12 @@
       <div class="container tile-stack" data-reveal>
         <span class="eyebrow">Built by Kyra Labs</span>
         <h2 class="display-lg">Made by one developer, not a product team.</h2>
-        <p class="body-copy" style="max-width: 620px; margin: 0 auto var(--space-lg);">Spenzia is built natively for Android with Kotlin and Jetpack Compose, on a local Room database — the kind of small, deliberate stack one person can actually maintain and keep fast.</p>
+        <p class="body-copy" style="max-width: 620px; margin: 0 auto var(--space-lg);">Spenzia is an open-source, privacy-focused, cross-platform app for Web, Android, iOS, Linux, and Windows — one codebase, one developer, kept small enough to actually maintain.</p>
         <div>
-          <span class="tech-pill">Kotlin</span>
-          <span class="tech-pill">Jetpack Compose</span>
-          <span class="tech-pill">Room</span>
-          <span class="tech-pill">MVVM</span>
+          <span class="tech-pill">Cross-platform</span>
+          <span class="tech-pill">Open source</span>
+          <span class="tech-pill">Local-first</span>
+          <span class="tech-pill">Privacy-focused</span>
         </div>
         <div class="btn-row" style="margin-top: var(--space-xl);">
           <a class="btn btn--ghost" href="https://kyralabs.dev/">More about Kyra Labs</a>
@@ -264,13 +266,13 @@
     <!-- Final CTA -->
     <section class="tile tile--dark">
       <div class="container tile-stack" data-reveal>
-        <span class="eyebrow eyebrow--on-dark">Coming soon</span>
-        <h2 class="display-lg">Be the first to try Spenzia</h2>
-        <p class="lead lead--on-dark">Join the waitlist and get one email the day it's ready — nothing before, nothing after.</p>
+        <span class="eyebrow eyebrow--on-dark">In development</span>
+        <h2 class="display-lg">Get notified when Spenzia ships</h2>
+        <p class="lead lead--on-dark">Spenzia is in development. Get notified and we'll send one email the day it's ready — nothing before, nothing after.</p>
         <form class="waitlist-form" data-waitlist-form>
           <label class="visually-hidden" for="footer-email">Email address</label>
           <input class="waitlist-input" id="footer-email" type="email" placeholder="you@example.com" required autocomplete="email" />
-          <button class="btn btn--primary" type="submit">Join waitlist</button>
+          <button class="btn btn--primary" type="submit">Get notified</button>
         </form>
         <div class="form-status" data-form-status role="status" aria-live="polite"></div>
       </div>
@@ -280,18 +282,20 @@
   <footer class="site-footer">
     <div class="container footer-top">
       <div class="footer-brand">
-        <img src="/assets/img/kyra-wordmark.png" alt="Kyra Labs" width="120" height="50" />
+        <img src="/assets/img/kyra-wordmark.png" alt="Kyra Labs" width="104" height="56" />
         <p>Spenzia is built and maintained by Kyra Labs, an independent one-person app studio.</p>
       </div>
       <div class="footer-col">
         <h4>Spenzia</h4>
         <a href="#features">Features</a>
         <a href="#built-by">About</a>
-        <a href="#waitlist">Waitlist</a>
+        <a href="#waitlist">Get notified</a>
       </div>
       <div class="footer-col">
         <h4>Connect</h4>
         <a href="https://kyralabs.dev/">Kyra Labs</a>
+        <a href="https://www.instagram.com/kyra__labs/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://github.com/kyra-labs" target="_blank" rel="noopener">GitHub</a>
         <a href="mailto:kyra.labs.3011@gmail.com">Email</a>
       </div>
     </div>
