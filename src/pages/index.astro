@@ -1,0 +1,236 @@
+---
+import WaitlistFallback from '../components/WaitlistFallback.astro';
+import WaitlistForm from '../islands/WaitlistForm';
+import Base from '../layouts/Base.astro';
+import { homeNav } from '../nav';
+
+const budgets = [
+  { name: 'Food', amount: '₹6,200 / ₹8,000', fill: '77%' },
+  { name: 'Transport', amount: '₹2,100 / ₹3,000', fill: '70%' },
+  { name: 'Rent', amount: '₹9,000 / ₹9,000', fill: '100%' },
+];
+const months = [
+  { label: 'Feb', value: '38%' },
+  { label: 'Mar', value: '52%' },
+  { label: 'Apr', value: '44%' },
+  { label: 'May', value: '78%', isPeak: true },
+  { label: 'Jun', value: '60%' },
+  { label: 'Jul', value: '68%' },
+];
+const bills = [
+  { name: 'Electricity', due: 'Due in 3 days', amount: '₹1,120' },
+  { name: 'Internet', due: 'Due in 6 days', amount: '₹799' },
+  { name: 'Rent', due: 'Due in 12 days', amount: '₹9,000' },
+];
+---
+
+<Base title="Spenzia — A Simple Expense Tracker (In Development) | Kyra Labs" nav={homeNav} fullFooter>
+  <Fragment slot="head">
+    <meta name="description" content="Spenzia is an upcoming open-source, cross-platform expense tracker with budgets, categories, spending charts, and recurring bill reminders. Built by Kyra Labs." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://spenzia.kyralabs.dev/" />
+  </Fragment>
+  <Fragment slot="meta">
+    <meta name="author" content="Kyra Labs" />
+    <meta name="keywords" content="Spenzia, expense tracker app, budget app, cross-platform expense tracker, open-source expense tracker, privacy-focused expense tracker, spending tracker, Kyra Labs, personal finance app India" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Spenzia" />
+    <meta property="og:title" content="Spenzia — A Simple Expense Tracker (In Development)" />
+    <meta property="og:description" content="Budgets, categories, spending charts, and bill reminders — without the clutter. Built by Kyra Labs." />
+    <meta property="og:url" content="https://spenzia.kyralabs.dev/" />
+    <meta property="og:image" content="https://spenzia.kyralabs.dev/assets/img/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Spenzia — A Simple Expense Tracker (In Development)" />
+    <meta name="twitter:description" content="Budgets, categories, spending charts, and bill reminders — without the clutter. Built by Kyra Labs." />
+    <meta name="twitter:image" content="https://spenzia.kyralabs.dev/assets/img/og-image.png" />
+  </Fragment>
+  <Fragment slot="structured-data">
+    <script type="application/ld+json" is:inline>
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Spenzia",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web, Android, iOS, Linux, Windows",
+    "url": "https://spenzia.kyralabs.dev/",
+    "description": "Spenzia is an upcoming open-source, cross-platform expense tracker with budgets, categories, spending charts, and recurring bill reminders.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Kyra Labs",
+      "url": "https://kyralabs.dev/"
+    },
+    "offers": {
+      "@type": "Offer",
+      "availability": "https://schema.org/PreOrder",
+      "price": "0",
+      "priceCurrency": "INR"
+    }
+  }
+  </script>
+  </Fragment>
+
+  <main id="main">
+    <!-- Hero / waitlist -->
+    <section id="waitlist" class="section-shell hero">
+      <div class="split split--hero">
+        <div class="m3e-card m3e-card--elevated phone-frame">
+          <div>
+            <div class="mock-balance-label">Spent this month</div>
+            <div class="mock-balance">₹18,240</div>
+          </div>
+          <span class="mock-chip">● 62% of budget used</span>
+          <div class="mock-row">
+            <div>
+              <div class="mock-row__label">Groceries</div>
+              <div class="mock-row__sub">Today · Food</div>
+            </div>
+            <div class="mock-row__amt">− ₹640</div>
+          </div>
+          <div class="mock-row">
+            <div>
+              <div class="mock-row__label">Electricity bill</div>
+              <div class="mock-row__sub">Due in 3 days · Recurring</div>
+            </div>
+            <div class="mock-row__amt">− ₹1,120</div>
+          </div>
+          <div class="mock-row">
+            <div>
+              <div class="mock-row__label">Cab ride</div>
+              <div class="mock-row__sub">Yesterday · Transport</div>
+            </div>
+            <div class="mock-row__amt">− ₹210</div>
+          </div>
+        </div>
+        <div class="split-copy">
+          <img class="app-icon-tile" src="/assets/img/icon-192.png" alt="" width="96" height="96" />
+          <span class="eyebrow">In development at Kyra Labs</span>
+          <h1>Know where your money goes.</h1>
+          <p class="lead">Spenzia is a straightforward expense tracker — log spending in seconds, keep budgets by category, and see exactly where your month went. No clutter, no subscriptions to track your subscriptions.</p>
+          <WaitlistForm client:only="react" id="hero">
+            <WaitlistFallback slot="fallback" id="hero" />
+          </WaitlistForm>
+          <p class="waitlist-note">Spenzia is in development — get notified the day it's ready. One email, nothing else.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature: Budgets & categories -->
+    <section id="features" class="section-shell">
+      <div class="split" data-reveal>
+        <div class="split-copy">
+          <span class="eyebrow">Categories &amp; budgets</span>
+          <h2>Set a budget once. Spenzia tracks the rest.</h2>
+          <p>Group spending into categories that match how you actually live — food, rent, transport, whatever you need — and set a monthly limit for each. Spenzia keeps a running total so you always know how much room is left before payday.</p>
+        </div>
+        <div class="m3e-card m3e-card--elevated feature-media budget-list">
+          {
+            budgets.map((budget) => (
+              <div>
+                <div class="budget-item__top">
+                  <span class="budget-item__name">{budget.name}</span>
+                  <span class="budget-item__amt">{budget.amount}</span>
+                </div>
+                <div class="budget-track">
+                  <div class="budget-fill" style={`--_fill: ${budget.fill}`} />
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature: Charts & insights -->
+    <section class="section-shell">
+      <div class="split split--reverse" data-reveal>
+        <div class="m3e-card m3e-card--elevated feature-media">
+          <div class="chart-mock">
+            {
+              months.map((month) => (
+                <div
+                  class:list={['chart-mock__bar', { 'is-peak': month.isPeak }]}
+                  style={`--_value: ${month.value}`}
+                />
+              ))
+            }
+          </div>
+          <div class="chart-mock__labels">
+            {months.map((month) => <span>{month.label}</span>)}
+          </div>
+        </div>
+        <div class="split-copy">
+          <span class="eyebrow">Spending insights</span>
+          <h2>See the pattern, not just the numbers.</h2>
+          <p>A simple monthly view shows spending trends over time, and a category breakdown shows exactly what's driving the total — so "where did it all go" has an actual answer.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature: Recurring bills -->
+    <section class="section-shell">
+      <div class="split" data-reveal>
+        <div class="split-copy">
+          <span class="eyebrow">Recurring bills</span>
+          <h2>Never get surprised by a bill again.</h2>
+          <p>Mark a bill as recurring once — rent, subscriptions, utilities — and Spenzia reminds you before it's due, so it's already budgeted for instead of showing up as a surprise.</p>
+        </div>
+        <div class="m3e-card m3e-card--elevated feature-media bill-list">
+          {
+            bills.map((bill, index) => (
+              <>
+                {index > 0 && <hr class="m3e-divider" />}
+                <div class="bill-item">
+                  <span class="bill-item__icon" aria-hidden="true">
+                    <span class="m3e-icon">notifications</span>
+                  </span>
+                  <div>
+                    <div class="bill-item__name">{bill.name}</div>
+                    <div class="bill-item__due">{bill.due}</div>
+                  </div>
+                  <div class="bill-item__amt">{bill.amount}</div>
+                </div>
+              </>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Built by Kyra Labs -->
+    <section id="built-by" class="section-shell">
+      <div class="stack" data-reveal>
+        <span class="eyebrow">Built by Kyra Labs</span>
+        <h2 class="display">Made by one developer, not a product team.</h2>
+        <p>Spenzia is an open-source, privacy-focused, cross-platform app for Web, Android, iOS, Linux, and Windows — one codebase, one developer, kept small enough to actually maintain.</p>
+        <div class="tag-row">
+          <span class="tag">Cross-platform</span>
+          <span class="tag">Open source</span>
+          <span class="tag">Local-first</span>
+          <span class="tag">Privacy-focused</span>
+        </div>
+        <div class="action-row">
+          <a class="m3e-button m3e-button--outlined" href="https://kyralabs.dev/">More about Kyra Labs</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="section-shell">
+      <div class="stack" data-reveal>
+        <span class="eyebrow">In development</span>
+        <h2 class="display">Get notified when Spenzia ships</h2>
+        <p class="lead">Spenzia is in development. Get notified and we'll send one email the day it's ready — nothing before, nothing after.</p>
+        <WaitlistForm client:only="react" id="footer">
+          <WaitlistFallback slot="fallback" id="footer" />
+        </WaitlistForm>
+      </div>
+    </section>
+  </main>
+</Base>

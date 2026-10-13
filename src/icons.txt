@@ -1,0 +1,4 @@
+# Material Symbols (Rounded, D12) used on the site. `pnpm gen:icons` subsets these.
+apps
+info
+notifications

@@ -1,0 +1,790 @@
+/*
+ * spenzia.kyralabs.dev on @kyralabs Material 3 Expressive (m3exp-web 1.0.0), same system as
+ * kyralabs.dev.
+ *
+ * Tokens only: every colour, size, duration, easing, radius and type value is a var(--m3e-…)
+ * token; stylelint.config.js enforces the library's own rules here. Exceptions, both because
+ * media queries can't read custom properties and m3e-tokens has no layout tokens yet:
+ *   - breakpoints are the M3 window size classes (compact < 600 ≤ medium < 840 ≤ expanded
+ *     < 1200 ≤ large < 1600 ≤ extra-large);
+ *   - page margins grow with the viewport (vw) above expanded instead of capping a max width.
+ */
+@layer reset, m3e.tokens, m3e.base, m3e.components, site;
+
+@import '@kyralabs/m3e-tokens/fonts.css';
+@import '@kyralabs/m3e-tokens/tokens.css';
+@import '@kyralabs/m3e-tokens/components/outlined-text-field.css';
+@import '@kyralabs/m3e-css/state-layer.css';
+@import '@kyralabs/m3e-css/focus-ring.css';
+@import '@kyralabs/m3e-css/icon.css';
+@import '@kyralabs/m3e-css/button.css';
+@import '@kyralabs/m3e-css/card.css';
+@import '@kyralabs/m3e-css/divider.css';
+@import '@kyralabs/m3e-css/top-app-bar.css';
+@import '@kyralabs/m3e-css/short-navigation-bar.css';
+@import '@kyralabs/m3e-css/loading-indicator.css';
+@import './generated/theme.css';
+@import './generated/icons.css';
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    text-size-adjust: 100%;
+  }
+
+  body,
+  h1,
+  h2,
+  h3,
+  p,
+  ul {
+    margin: 0;
+  }
+
+  ul {
+    padding: 0;
+    list-style: none;
+  }
+
+  img,
+  svg {
+    display: block;
+    max-inline-size: 100%;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+
+  :where(a) {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+@layer site {
+  :root {
+    /* Page margin: M3 compact 16dp, medium and up 24dp, wider from expanded (see below). */
+    --_gutter: var(--m3e-sys-space-200);
+    --_gutter-wide: var(--_gutter);
+    --_section-space: var(--m3e-sys-space-800);
+    --_card-padding: var(--m3e-sys-space-300);
+
+    scroll-padding-block-start: var(--m3e-comp-app-bar-small-container-height);
+  }
+
+  body {
+    min-block-size: 100svh;
+    padding-block-end: calc(
+      var(--m3e-comp-navigation-bar-container-height) + env(safe-area-inset-bottom)
+    );
+    background-color: var(--m3e-sys-color-surface);
+    color: var(--m3e-sys-color-on-surface);
+    font-family: var(--m3e-sys-typescale-body-large-font);
+    font-size: var(--m3e-sys-typescale-body-large-size);
+    font-weight: var(--m3e-sys-typescale-body-large-weight);
+    line-height: var(--m3e-sys-typescale-body-large-line-height);
+    letter-spacing: var(--m3e-sys-typescale-body-large-tracking);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--m3e-sys-color-primary);
+    color: var(--m3e-sys-color-on-primary);
+  }
+
+  /* Plain links and the form field; components bring their own focus ring (focus-ring.css). */
+  :where(a:not([class*='m3e-']), input):focus-visible {
+    outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
+    outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    inline-size: var(--m3e-comp-divider-thickness); /* 1px: screen-reader-only box */
+    block-size: var(--m3e-comp-divider-thickness);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .skip-link {
+    position: fixed;
+    z-index: 3;
+    inset-block-start: var(--m3e-sys-space-200);
+    inset-inline-start: var(--m3e-sys-space-200);
+    padding-block: var(--m3e-sys-space-150);
+    padding-inline: var(--m3e-sys-space-300);
+    border-radius: var(--m3e-sys-shape-corner-full);
+    background-color: var(--m3e-sys-color-primary);
+    color: var(--m3e-sys-color-on-primary);
+    font-family: var(--m3e-sys-typescale-label-large-font);
+    font-size: var(--m3e-sys-typescale-label-large-size);
+    font-weight: var(--m3e-sys-typescale-label-large-weight);
+    line-height: var(--m3e-sys-typescale-label-large-line-height);
+    letter-spacing: var(--m3e-sys-typescale-label-large-tracking);
+  }
+
+  .skip-link:not(:focus) {
+    clip-path: inset(50%);
+    pointer-events: none;
+  }
+
+  /* ---- Top app bar (small) ---------------------------------------------------------------- */
+
+  .site-bar {
+    position: sticky;
+    z-index: 2;
+    inset-block-start: 0;
+    padding-inline: max(0%, calc(var(--_gutter) - var(--m3e-comp-top-app-bar-horizontal-padding)));
+  }
+
+  .site-bar__headline {
+    margin-inline-start: 0;
+  }
+
+  /* "Kyra Labs" back-link: wordmark + label, as before. */
+  .back-to-studio {
+    display: inline-flex;
+    gap: var(--m3e-sys-space-100);
+    align-items: center;
+    align-self: flex-start;
+    min-block-size: var(--m3e-comp-minimum-interactive-component-size);
+    color: var(--m3e-sys-color-on-surface);
+    font-family: var(--m3e-sys-typescale-title-medium-font);
+    font-size: var(--m3e-sys-typescale-title-medium-size);
+    font-weight: var(--m3e-sys-typescale-title-medium-weight);
+    line-height: var(--m3e-sys-typescale-title-medium-line-height);
+  }
+
+  .back-to-studio img {
+    inline-size: auto;
+    block-size: var(--m3e-sys-space-400);
+  }
+
+  .site-bar__links {
+    display: none;
+    gap: var(--m3e-sys-space-50);
+  }
+
+  /* The bar takes its on-scroll colour once the page scrolls, without JavaScript. */
+  @supports (animation-timeline: scroll()) {
+    .site-bar {
+      animation-name: site-bar-scrolled;
+      animation-duration: auto;
+      animation-timing-function: var(--m3e-sys-motion-easing-linear);
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 var(--m3e-sys-space-100);
+    }
+  }
+
+  @keyframes site-bar-scrolled {
+    to {
+      background-color: var(--m3e-comp-app-bar-on-scroll-container-color);
+    }
+  }
+
+  /* ---- Navigation bar (compact and medium; island in src/islands/SectionNav.tsx) ----------- */
+
+  .site-nav-bar {
+    position: fixed;
+    z-index: 2;
+    inset-inline: 0;
+    inset-block-end: 0;
+  }
+
+  /* ---- Sections ---------------------------------------------------------------------------- */
+
+  .section-shell {
+    padding-block: var(--_section-space);
+    padding-inline: var(--_gutter);
+  }
+
+  .hero {
+    display: grid;
+    align-items: center;
+    min-block-size: calc(100svh - var(--m3e-comp-app-bar-small-container-height));
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--m3e-sys-space-600);
+    align-items: center;
+  }
+
+  .split-copy {
+    display: grid;
+    gap: var(--m3e-sys-space-200);
+    justify-items: start;
+  }
+
+  .split-copy > p,
+  .stack > p {
+    color: var(--m3e-sys-color-on-surface-variant);
+  }
+
+  /* Centered stacks ("Built by Kyra Labs", final call to action). */
+  .stack {
+    display: grid;
+    gap: var(--m3e-sys-space-200);
+    justify-items: center;
+    padding-inline: 10%;
+    text-align: center;
+  }
+
+  /* ---- Type (M3 typescale; emphasized styles for headings) ----------------------------- */
+
+  h1 {
+    font-family: var(--m3e-sys-typescale-display-medium-emphasized-font);
+    font-size: var(--m3e-sys-typescale-display-medium-emphasized-size);
+    font-weight: var(--m3e-sys-typescale-display-medium-emphasized-weight);
+    line-height: var(--m3e-sys-typescale-display-medium-emphasized-line-height);
+    letter-spacing: var(--m3e-sys-typescale-display-medium-emphasized-tracking);
+  }
+
+  h2 {
+    font-family: var(--m3e-sys-typescale-headline-large-emphasized-font);
+    font-size: var(--m3e-sys-typescale-headline-large-emphasized-size);
+    font-weight: var(--m3e-sys-typescale-headline-large-emphasized-weight);
+    line-height: var(--m3e-sys-typescale-headline-large-emphasized-line-height);
+    letter-spacing: var(--m3e-sys-typescale-headline-large-emphasized-tracking);
+  }
+
+  h2.display {
+    font-family: var(--m3e-sys-typescale-display-small-emphasized-font);
+    font-size: var(--m3e-sys-typescale-display-small-emphasized-size);
+    font-weight: var(--m3e-sys-typescale-display-small-emphasized-weight);
+    line-height: var(--m3e-sys-typescale-display-small-emphasized-line-height);
+    letter-spacing: var(--m3e-sys-typescale-display-small-emphasized-tracking);
+  }
+
+  h1,
+  h2 {
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+
+  .lead {
+    color: var(--m3e-sys-color-on-surface-variant);
+    font-family: var(--m3e-sys-typescale-title-large-font);
+    font-size: var(--m3e-sys-typescale-title-large-size);
+    font-weight: var(--m3e-sys-typescale-title-large-weight);
+    line-height: var(--m3e-sys-typescale-title-large-line-height);
+    letter-spacing: var(--m3e-sys-typescale-title-large-tracking);
+  }
+
+  .eyebrow,
+  .footer-col h2 {
+    color: var(--m3e-sys-color-primary);
+    font-family: var(--m3e-sys-typescale-label-large-emphasized-font);
+    font-size: var(--m3e-sys-typescale-label-large-emphasized-size);
+    font-weight: var(--m3e-sys-typescale-label-large-emphasized-weight);
+    line-height: var(--m3e-sys-typescale-label-large-emphasized-line-height);
+    letter-spacing: var(--m3e-sys-typescale-label-large-emphasized-tracking);
+  }
+
+  .waitlist-note,
+  .form-status,
+  .mock-balance-label,
+  .mock-row__sub,
+  .bill-item__due,
+  .chart-mock__labels,
+  .footer-brand p,
+  .footer-bottom,
+  .legal .updated {
+    color: var(--m3e-sys-color-on-surface-variant);
+    font-family: var(--m3e-sys-typescale-body-medium-font);
+    font-size: var(--m3e-sys-typescale-body-medium-size);
+    font-weight: var(--m3e-sys-typescale-body-medium-weight);
+    line-height: var(--m3e-sys-typescale-body-medium-line-height);
+    letter-spacing: var(--m3e-sys-typescale-body-medium-tracking);
+  }
+
+  .text-link,
+  .footer-col a,
+  .footer-bottom a {
+    color: var(--m3e-sys-color-primary);
+    font-weight: var(--m3e-ref-typeface-weight-medium);
+    text-decoration: underline;
+    text-decoration-thickness: var(--m3e-comp-divider-thickness);
+    text-underline-offset: var(--m3e-sys-space-50);
+  }
+
+  .action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--m3e-sys-space-150);
+    justify-content: center;
+    margin-block-start: var(--m3e-sys-space-150);
+  }
+
+  /* Static tags ("Cross-platform", …). Not chips: M3 chips are actions; these aren't. */
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--m3e-sys-space-100);
+    justify-content: center;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--m3e-sys-space-400);
+    padding-inline: var(--m3e-sys-space-200);
+    border: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+    border-radius: var(--m3e-sys-shape-corner-small);
+    color: var(--m3e-sys-color-on-surface-variant);
+    font-family: var(--m3e-sys-typescale-label-large-font);
+    font-size: var(--m3e-sys-typescale-label-large-size);
+    font-weight: var(--m3e-sys-typescale-label-large-weight);
+    line-height: var(--m3e-sys-typescale-label-large-line-height);
+    letter-spacing: var(--m3e-sys-typescale-label-large-tracking);
+  }
+
+  /* ---- Hero: app icon, phone mock ------------------------------------------------------ */
+
+  .app-icon-tile {
+    inline-size: var(--m3e-sys-space-900);
+    block-size: var(--m3e-sys-space-900);
+    border-radius: var(--m3e-sys-shape-corner-large);
+  }
+
+  .phone-frame {
+    display: grid;
+    gap: var(--m3e-sys-space-150);
+    inline-size: 100%;
+    padding: var(--_card-padding);
+    justify-self: center;
+  }
+
+  .mock-balance {
+    font-family: var(--m3e-sys-typescale-headline-large-emphasized-font);
+    font-size: var(--m3e-sys-typescale-headline-large-emphasized-size);
+    font-weight: var(--m3e-sys-typescale-headline-large-emphasized-weight);
+    line-height: var(--m3e-sys-typescale-headline-large-emphasized-line-height);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mock-chip {
+    justify-self: start;
+    padding-block: var(--m3e-sys-space-50);
+    padding-inline: var(--m3e-sys-space-150);
+    border-radius: var(--m3e-sys-shape-corner-full);
+    background-color: var(--m3e-sys-color-primary-container);
+    color: var(--m3e-sys-color-on-primary-container);
+    font-family: var(--m3e-sys-typescale-label-large-emphasized-font);
+    font-size: var(--m3e-sys-typescale-label-large-emphasized-size);
+    font-weight: var(--m3e-sys-typescale-label-large-emphasized-weight);
+    line-height: var(--m3e-sys-typescale-label-large-emphasized-line-height);
+  }
+
+  .mock-row {
+    display: flex;
+    gap: var(--m3e-sys-space-200);
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--m3e-sys-space-200);
+    border-radius: var(--m3e-sys-shape-corner-medium);
+    background-color: var(--m3e-sys-color-surface-container-lowest);
+  }
+
+  .mock-row__label,
+  .bill-item__name,
+  .budget-item__name {
+    font-weight: var(--m3e-ref-typeface-weight-medium);
+  }
+
+  .mock-row__amt,
+  .bill-item__amt,
+  .budget-item__amt {
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--m3e-ref-typeface-weight-medium);
+    white-space: nowrap;
+  }
+
+  /* ---- Feature cards ------------------------------------------------------------------- */
+
+  .feature-media {
+    padding: var(--_card-padding);
+  }
+
+  .budget-list {
+    display: grid;
+    gap: var(--m3e-sys-space-300);
+  }
+
+  .budget-item__top {
+    display: flex;
+    gap: var(--m3e-sys-space-200);
+    justify-content: space-between;
+    margin-block-end: var(--m3e-sys-space-100);
+  }
+
+  .budget-track {
+    block-size: var(--m3e-sys-space-100);
+    overflow: clip;
+    border-radius: var(--m3e-sys-shape-corner-full);
+    background-color: var(--m3e-sys-color-surface-container-highest);
+  }
+
+  /* --_fill / --_value come from the markup: data, not design values. */
+  .budget-fill {
+    inline-size: var(--_fill);
+    block-size: 100%;
+    border-radius: var(--m3e-sys-shape-corner-full);
+    background-color: var(--m3e-sys-color-primary);
+  }
+
+  .chart-mock {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--m3e-sys-space-150);
+    align-items: end;
+    block-size: calc(var(--m3e-sys-space-900) + var(--m3e-sys-space-900) + var(--m3e-sys-space-600));
+  }
+
+  .chart-mock__bar {
+    block-size: var(--_value);
+    border-radius: var(--m3e-sys-shape-corner-small);
+    background-color: var(--m3e-sys-color-secondary-container);
+  }
+
+  .chart-mock__bar.is-peak {
+    background-color: var(--m3e-sys-color-primary);
+  }
+
+  .chart-mock__labels {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--m3e-sys-space-150);
+    margin-block-start: var(--m3e-sys-space-100);
+    text-align: center;
+  }
+
+  .bill-item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--m3e-sys-space-200);
+    align-items: center;
+    padding-block: var(--m3e-sys-space-150);
+  }
+
+  .bill-item__icon {
+    display: grid;
+    inline-size: var(--m3e-sys-space-500);
+    block-size: var(--m3e-sys-space-500);
+    place-items: center;
+    border-radius: var(--m3e-sys-shape-corner-full);
+    background-color: var(--m3e-sys-color-primary-container);
+    color: var(--m3e-sys-color-on-primary-container);
+  }
+
+  /* ---- Waitlist (island in src/islands/WaitlistForm.tsx) ----------------------------- */
+
+  .waitlist-form {
+    display: grid;
+    gap: var(--m3e-sys-space-150);
+    inline-size: 100%;
+  }
+
+  /* An outlined text field built from its component tokens (no text field in m3e-css yet). */
+  .waitlist-input {
+    inline-size: 100%;
+    min-block-size: var(--m3e-comp-outlined-text-field-container-height);
+    padding-inline: var(--m3e-sys-space-200);
+    border: var(--m3e-comp-outlined-text-field-outline-width) solid
+      var(--m3e-comp-outlined-text-field-outline-color);
+    border-radius: var(--m3e-comp-outlined-text-field-container-shape);
+    background-color: transparent;
+    color: var(--m3e-comp-outlined-text-field-input-color);
+    font-family: var(--m3e-comp-outlined-text-field-input-font);
+    font-size: var(--m3e-comp-outlined-text-field-input-size);
+    font-weight: var(--m3e-comp-outlined-text-field-input-weight);
+    line-height: var(--m3e-comp-outlined-text-field-input-line-height);
+    letter-spacing: var(--m3e-comp-outlined-text-field-input-tracking);
+    caret-color: var(--m3e-comp-outlined-text-field-caret-color);
+  }
+
+  .waitlist-input::placeholder {
+    color: var(--m3e-comp-outlined-text-field-input-placeholder-color);
+  }
+
+  .waitlist-input:hover {
+    border-color: var(--m3e-comp-outlined-text-field-outline-color-hover);
+  }
+
+  .waitlist-input:focus-visible {
+    border-color: var(--m3e-comp-outlined-text-field-outline-color-focus);
+    box-shadow: inset 0 0 0
+      calc(
+        var(--m3e-comp-outlined-text-field-outline-width-focus) -
+          var(--m3e-comp-outlined-text-field-outline-width)
+      )
+      var(--m3e-comp-outlined-text-field-outline-color-focus);
+    outline: none;
+  }
+
+  .form-status {
+    min-block-size: var(--m3e-sys-typescale-body-medium-line-height);
+  }
+
+  /* The LoadingIndicator at the button's icon size, in the button's content colour. */
+  .waitlist-form__indicator {
+    --m3e-comp-loading-indicator-container-width: var(--m3e-comp-button-medium-icon-size);
+    --m3e-comp-loading-indicator-container-height: var(--m3e-comp-button-medium-icon-size);
+    --m3e-comp-loading-indicator-active-indicator-color: currentcolor;
+
+    display: inline-flex;
+  }
+
+  .stack .waitlist-form {
+    justify-self: stretch;
+  }
+
+  /* ---- Footer ------------------------------------------------------------------------------ */
+
+  .site-footer {
+    display: grid;
+    gap: var(--m3e-sys-space-600);
+    padding-block: 0 var(--m3e-sys-space-400);
+    padding-inline: var(--_gutter);
+  }
+
+  .footer-top {
+    display: grid;
+    gap: var(--m3e-sys-space-500);
+  }
+
+  .footer-brand {
+    display: grid;
+    gap: var(--m3e-sys-space-200);
+    align-content: start;
+  }
+
+  .footer-brand img {
+    inline-size: auto;
+    block-size: var(--m3e-sys-space-500);
+  }
+
+  .footer-col {
+    display: grid;
+    gap: var(--m3e-sys-space-50);
+    align-content: start;
+    justify-items: start;
+  }
+
+  .footer-col a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--m3e-comp-minimum-interactive-component-size);
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--m3e-sys-space-200);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-bottom a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--m3e-comp-minimum-interactive-component-size);
+  }
+
+  /* ---- Privacy page ------------------------------------------------------------------------ */
+
+  .legal-page {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: var(--m3e-sys-space-600) var(--_section-space);
+    padding-inline: var(--_gutter);
+  }
+
+  .legal {
+    padding: var(--_card-padding);
+  }
+
+  .legal > * + * {
+    margin-block-start: var(--m3e-sys-space-200);
+  }
+
+  .legal h1 {
+    margin-block-start: var(--m3e-sys-space-150);
+    font-family: var(--m3e-sys-typescale-display-small-emphasized-font);
+    font-size: var(--m3e-sys-typescale-display-small-emphasized-size);
+    font-weight: var(--m3e-sys-typescale-display-small-emphasized-weight);
+    line-height: var(--m3e-sys-typescale-display-small-emphasized-line-height);
+    letter-spacing: var(--m3e-sys-typescale-display-small-emphasized-tracking);
+  }
+
+  .legal > h2 {
+    margin-block-start: var(--m3e-sys-space-600);
+    font-family: var(--m3e-sys-typescale-headline-small-emphasized-font);
+    font-size: var(--m3e-sys-typescale-headline-small-emphasized-size);
+    font-weight: var(--m3e-sys-typescale-headline-small-emphasized-weight);
+    line-height: var(--m3e-sys-typescale-headline-small-emphasized-line-height);
+    letter-spacing: var(--m3e-sys-typescale-headline-small-emphasized-tracking);
+  }
+
+  .legal > p,
+  .legal li {
+    color: var(--m3e-sys-color-on-surface-variant);
+  }
+
+  .legal strong {
+    color: var(--m3e-sys-color-on-surface);
+    font-weight: var(--m3e-ref-typeface-weight-medium);
+  }
+
+  .legal ul {
+    display: grid;
+    gap: var(--m3e-sys-space-150);
+    padding-inline-start: var(--m3e-sys-space-300);
+    list-style: disc;
+  }
+
+  .callout {
+    padding: var(--m3e-sys-space-300);
+    border: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
+    border-radius: var(--m3e-sys-shape-corner-large);
+    background-color: var(--m3e-sys-color-surface-container-lowest);
+  }
+
+  /* ---- Window size classes ----------------------------------------------------------------- */
+
+  @media (width >= 600px) {
+    :root {
+      --_gutter: var(--m3e-sys-space-300);
+    }
+
+    .waitlist-form {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+    }
+
+    .footer-top {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  @media (width >= 840px) {
+    :root {
+      --_gutter: 5vw;
+      --_section-space: calc(var(--m3e-sys-space-900) + var(--m3e-sys-space-600));
+      --_card-padding: var(--m3e-sys-space-400);
+    }
+
+    /* The top app bar shows the destinations; the navigation bar goes. */
+    body {
+      padding-block-end: 0;
+    }
+
+    .site-bar__links {
+      display: flex;
+    }
+
+    .site-nav-bar {
+      display: none;
+    }
+
+    h1 {
+      font-family: var(--m3e-sys-typescale-display-large-emphasized-font);
+      font-size: var(--m3e-sys-typescale-display-large-emphasized-size);
+      font-weight: var(--m3e-sys-typescale-display-large-emphasized-weight);
+      line-height: var(--m3e-sys-typescale-display-large-emphasized-line-height);
+      letter-spacing: var(--m3e-sys-typescale-display-large-emphasized-tracking);
+    }
+
+    h2.display {
+      font-family: var(--m3e-sys-typescale-display-medium-emphasized-font);
+      font-size: var(--m3e-sys-typescale-display-medium-emphasized-size);
+      font-weight: var(--m3e-sys-typescale-display-medium-emphasized-weight);
+      line-height: var(--m3e-sys-typescale-display-medium-emphasized-line-height);
+      letter-spacing: var(--m3e-sys-typescale-display-medium-emphasized-tracking);
+    }
+
+    .split {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--m3e-sys-space-900);
+    }
+
+    /* Phone mock first in the DOM (as before), copy first on screen. */
+    .split--hero {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    }
+
+    .split--hero .split-copy {
+      grid-row: 1;
+      grid-column: 1;
+    }
+
+    .stack {
+      padding-inline: 20%;
+    }
+
+    .legal-page {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 6fr) minmax(0, 1fr);
+      padding-block-start: var(--m3e-sys-space-900);
+    }
+
+    .legal {
+      grid-column: 2;
+    }
+  }
+
+  @media (width >= 1200px) {
+    :root {
+      --_gutter: 10vw;
+    }
+
+    .legal-page {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 3fr) minmax(0, 1fr);
+    }
+  }
+
+  @media (width >= 1600px) {
+    :root {
+      --_gutter: 15vw;
+    }
+  }
+
+  /* ---- Motion ------------------------------------------------------------------------------ */
+
+  /*
+   * Sections rise in as they scroll into view: CSS scroll-driven animations, no JavaScript.
+   * Browsers without animation-timeline, and reduced-motion users, get the static page.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+
+    @supports (animation-timeline: view()) {
+      [data-reveal] {
+        animation-name: site-reveal;
+        animation-duration: auto;
+        animation-timing-function: var(--m3e-sys-motion-easing-emphasized-decelerate);
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 60%;
+      }
+    }
+  }
+
+  @keyframes site-reveal {
+    from {
+      opacity: 0;
+      translate: 0 var(--m3e-sys-space-600);
+    }
+  }
+}
