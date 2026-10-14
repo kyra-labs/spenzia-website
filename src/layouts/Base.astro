@@ -110,5 +110,10 @@ const darkSurface = createTheme({ ...brand, mode: 'dark' }).tokens.dark?.surface
         <a href="/privacy.html">Privacy Policy</a>
       </div>
     </footer>
+
+    <!-- Deferred module (bundled by Astro): ripple + html.js for the scroll reveals. -->
+    <script>
+      import '../scripts/enhance';
+    </script>
   </body>
 </html>
