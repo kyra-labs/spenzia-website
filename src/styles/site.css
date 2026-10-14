@@ -1,5 +1,5 @@
 /*
- * spenzia.kyralabs.dev on @kyralabs Material 3 Expressive (m3exp-web 1.0.0), same system as
+ * spenzia.kyralabs.dev on @kyralabs Material 3 Expressive (m3exp-web 1.1), same system as
  * kyralabs.dev.
  *
  * Tokens only: every colour, size, duration, easing, radius and type value is a var(--m3e-…)
@@ -70,10 +70,17 @@
 
 @layer site {
   :root {
-    /* Page margin: M3 compact 16dp, medium and up 24dp, wider from expanded (see below). */
+    /*
+     * Pane hierarchy (as in Google's apps): the app bar, navigation and footer sit on the outer
+     * surface; each section is a pane on surface-container-low with large corners; cards inside
+     * a pane step up to surface-container-high.
+     * --_gutter: outer margin (M3 compact 16dp, medium 24dp, wider from large).
+     */
     --_gutter: var(--m3e-sys-space-200);
-    --_gutter-wide: var(--_gutter);
-    --_section-space: var(--m3e-sys-space-800);
+    --_pane-gap: var(--m3e-sys-space-150);
+    --_pane-padding: var(--m3e-sys-space-300);
+    --_pane-shape: var(--m3e-sys-shape-corner-extra-large);
+    --_section-space: var(--m3e-sys-space-600);
     --_card-padding: var(--m3e-sys-space-300);
 
     scroll-padding-block-start: var(--m3e-comp-app-bar-small-container-height);
@@ -202,15 +209,29 @@
 
   /* ---- Sections ---------------------------------------------------------------------------- */
 
-  .section-shell {
-    padding-block: var(--_section-space);
+  main {
+    display: grid;
+    gap: var(--_pane-gap);
     padding-inline: var(--_gutter);
+  }
+
+  /* A pane: one page section on its own container surface. */
+  .section-shell,
+  .pane {
+    --m3e-comp-elevated-card-container-color: var(--m3e-sys-color-surface-container-high);
+
+    padding-block: var(--_section-space);
+    padding-inline: var(--_pane-padding);
+    border-radius: var(--_pane-shape);
+    background-color: var(--m3e-sys-color-surface-container-low);
   }
 
   .hero {
     display: grid;
     align-items: center;
-    min-block-size: calc(100svh - var(--m3e-comp-app-bar-small-container-height));
+    min-block-size: calc(
+      100svh - var(--m3e-comp-app-bar-small-container-height) - var(--_pane-gap)
+    );
   }
 
   .split {
@@ -231,12 +252,12 @@
     color: var(--m3e-sys-color-on-surface-variant);
   }
 
-  /* Centered stacks ("Built by Kyra Labs", final call to action). */
+  /* Centered stacks ("Built by Kyra Labs", final call to action). On compact windows the pane's
+     own padding is the inset; from medium up they narrow further. */
   .stack {
     display: grid;
     gap: var(--m3e-sys-space-200);
     justify-items: center;
-    padding-inline: 10%;
     text-align: center;
   }
 
@@ -250,20 +271,25 @@
     letter-spacing: var(--m3e-sys-typescale-display-medium-emphasized-tracking);
   }
 
+  /*
+   * Section titles use the headline styles; display is only for the hero. The two centred
+   * statements (h2.display: "Built by Kyra Labs", the final call to action) take headline large
+   * at every size, one step above the feature titles on compact and medium windows.
+   */
   h2 {
+    font-family: var(--m3e-sys-typescale-headline-medium-emphasized-font);
+    font-size: var(--m3e-sys-typescale-headline-medium-emphasized-size);
+    font-weight: var(--m3e-sys-typescale-headline-medium-emphasized-weight);
+    line-height: var(--m3e-sys-typescale-headline-medium-emphasized-line-height);
+    letter-spacing: var(--m3e-sys-typescale-headline-medium-emphasized-tracking);
+  }
+
+  h2.display {
     font-family: var(--m3e-sys-typescale-headline-large-emphasized-font);
     font-size: var(--m3e-sys-typescale-headline-large-emphasized-size);
     font-weight: var(--m3e-sys-typescale-headline-large-emphasized-weight);
     line-height: var(--m3e-sys-typescale-headline-large-emphasized-line-height);
     letter-spacing: var(--m3e-sys-typescale-headline-large-emphasized-tracking);
-  }
-
-  h2.display {
-    font-family: var(--m3e-sys-typescale-display-small-emphasized-font);
-    font-size: var(--m3e-sys-typescale-display-small-emphasized-size);
-    font-weight: var(--m3e-sys-typescale-display-small-emphasized-weight);
-    line-height: var(--m3e-sys-typescale-display-small-emphasized-line-height);
-    letter-spacing: var(--m3e-sys-typescale-display-small-emphasized-tracking);
   }
 
   h1,
@@ -554,7 +580,7 @@
   .site-footer {
     display: grid;
     gap: var(--m3e-sys-space-600);
-    padding-block: 0 var(--m3e-sys-space-400);
+    padding-block: var(--m3e-sys-space-600) var(--m3e-sys-space-400);
     padding-inline: var(--_gutter);
   }
 
@@ -604,14 +630,7 @@
   /* ---- Privacy page ------------------------------------------------------------------------ */
 
   .legal-page {
-    display: grid;
     grid-template-columns: minmax(0, 1fr);
-    padding-block: var(--m3e-sys-space-600) var(--_section-space);
-    padding-inline: var(--_gutter);
-  }
-
-  .legal {
-    padding: var(--_card-padding);
   }
 
   .legal > * + * {
@@ -665,6 +684,13 @@
   @media (width >= 600px) {
     :root {
       --_gutter: var(--m3e-sys-space-300);
+      --_pane-gap: var(--m3e-sys-space-200);
+      --_pane-padding: var(--m3e-sys-space-600);
+      --_section-space: var(--m3e-sys-space-800);
+    }
+
+    .stack {
+      padding-inline: 10%;
     }
 
     .waitlist-form {
@@ -679,8 +705,10 @@
 
   @media (width >= 840px) {
     :root {
-      --_gutter: 5vw;
-      --_section-space: calc(var(--m3e-sys-space-900) + var(--m3e-sys-space-600));
+      --_gutter: var(--m3e-sys-space-300);
+      --_pane-padding: 6vw;
+      --_pane-shape: var(--m3e-sys-shape-corner-extra-large-increased);
+      --_section-space: calc(var(--m3e-sys-space-900) + var(--m3e-sys-space-400));
       --_card-padding: var(--m3e-sys-space-400);
     }
 
@@ -705,12 +733,12 @@
       letter-spacing: var(--m3e-sys-typescale-display-large-emphasized-tracking);
     }
 
-    h2.display {
-      font-family: var(--m3e-sys-typescale-display-medium-emphasized-font);
-      font-size: var(--m3e-sys-typescale-display-medium-emphasized-size);
-      font-weight: var(--m3e-sys-typescale-display-medium-emphasized-weight);
-      line-height: var(--m3e-sys-typescale-display-medium-emphasized-line-height);
-      letter-spacing: var(--m3e-sys-typescale-display-medium-emphasized-tracking);
+    h2 {
+      font-family: var(--m3e-sys-typescale-headline-large-emphasized-font);
+      font-size: var(--m3e-sys-typescale-headline-large-emphasized-size);
+      font-weight: var(--m3e-sys-typescale-headline-large-emphasized-weight);
+      line-height: var(--m3e-sys-typescale-headline-large-emphasized-line-height);
+      letter-spacing: var(--m3e-sys-typescale-headline-large-emphasized-tracking);
     }
 
     .split {
@@ -734,7 +762,6 @@
 
     .legal-page {
       grid-template-columns: minmax(0, 1fr) minmax(0, 6fr) minmax(0, 1fr);
-      padding-block-start: var(--m3e-sys-space-900);
     }
 
     .legal {
@@ -744,7 +771,8 @@
 
   @media (width >= 1200px) {
     :root {
-      --_gutter: 10vw;
+      --_gutter: 6vw;
+      --_pane-padding: 7vw;
     }
 
     .legal-page {
@@ -754,23 +782,42 @@
 
   @media (width >= 1600px) {
     :root {
-      --_gutter: 15vw;
+      --_gutter: 12vw;
     }
   }
 
   /* ---- Motion ------------------------------------------------------------------------------ */
 
   /*
-   * Sections rise in as they scroll into view: CSS scroll-driven animations, no JavaScript.
-   * Browsers without animation-timeline, and reduced-motion users, get the static page.
+   * All motion uses the --m3e-sys-motion-* spring tokens and transform/opacity only (no layout
+   * shift), and none of it runs under prefers-reduced-motion.
+   *
+   * - Entrance on load: the hero copy, then the phone mock, rise into place. Transform only, so
+   *   nothing is ever hidden: no-JS visitors and crawlers get the same, complete page. The copy
+   *   rises as one block because the waitlist form inside it is an island that React re-renders
+   *   on hydration (a per-item animation would replay then), and a still item under a rising
+   *   one would overlap it.
+   * - Scroll reveals (opacity + rise, CSS scroll-driven) only once src/scripts/enhance.ts has
+   *   marked the page with html.js, so without JavaScript every section is visible.
+   * - No hover lift: none of the cards has a single primary link, so none is interactive.
    */
   @media (prefers-reduced-motion: no-preference) {
     html {
       scroll-behavior: smooth;
     }
 
+    .hero .split-copy,
+    .hero .phone-frame {
+      animation: site-enter var(--m3e-sys-motion-spring-expressive-fast-spatial-duration)
+        var(--m3e-sys-motion-spring-expressive-fast-spatial-easing) both;
+    }
+
+    .hero .phone-frame {
+      animation-delay: var(--m3e-sys-motion-duration-short2);
+    }
+
     @supports (animation-timeline: view()) {
-      [data-reveal] {
+      .js [data-reveal] {
         animation-name: site-reveal;
         animation-duration: auto;
         animation-timing-function: var(--m3e-sys-motion-easing-emphasized-decelerate);
@@ -778,6 +825,12 @@
         animation-timeline: view();
         animation-range: entry 0% entry 60%;
       }
+    }
+  }
+
+  @keyframes site-enter {
+    from {
+      translate: 0 var(--m3e-sys-space-300);
     }
   }
 
