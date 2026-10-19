@@ -1,5 +1,6 @@
 ---
-// The waitlist form as static HTML, shown until the WaitlistForm island hydrates. Submitting needs
+// The waitlist form as static HTML, shown until the WaitlistForm island hydrates: the same
+// m3e-css outlined text field DOM the island renders (the label floats in CSS). Submitting needs
 // the island, so the button stays disabled here (a no-JS submit would put the email in the URL).
 interface Props {
   id: string;
@@ -8,16 +9,23 @@ interface Props {
 const { id } = Astro.props;
 ---
 
-<form class="waitlist-form">
-  <label class="visually-hidden" for={`${id}-email`}>Email address</label>
-  <input
-    class="waitlist-input"
-    id={`${id}-email`}
-    type="email"
-    placeholder="you@example.com"
-    required
-    autocomplete="email"
-  />
+<form class="waitlist-form" novalidate>
+  <div class="m3e-text-field m3e-text-field--outlined waitlist-field">
+    <div class="m3e-text-field__container">
+      <label class="m3e-text-field__label" for={`${id}-email`}>Email address</label>
+      <input
+        class="m3e-text-field__input"
+        id={`${id}-email`}
+        type="email"
+        inputmode="email"
+        placeholder="you@example.com"
+        required
+        autocomplete="email"
+      />
+      <fieldset class="m3e-text-field__outline" aria-hidden="true">
+        <legend class="m3e-text-field__notch"><span>Email address</span></legend>
+      </fieldset>
+    </div>
+  </div>
   <button class="m3e-button m3e-button--size-m" type="submit" disabled>Get notified</button>
 </form>
-<div class="form-status" role="status" aria-live="polite"></div>

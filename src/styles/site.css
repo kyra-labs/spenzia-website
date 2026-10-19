@@ -1,10 +1,10 @@
 /*
- * spenzia.kyralabs.dev on @kyralabs Material 3 Expressive (m3exp-web 1.1), same system as
+ * spenzia.kyralabs.dev on @kyralabs Material 3 Expressive (m3exp-web 1.7), same system as
  * kyralabs.dev.
  *
  * Tokens only: every colour, size, duration, easing, radius and type value is a var(--m3e-…)
- * token; stylelint.config.js enforces the library's own rules here. Exceptions, both because
- * media queries can't read custom properties and m3e-tokens has no layout tokens yet:
+ * token; stylelint.config.js enforces the library's own rules here. Exceptions, because media
+ * queries can't read custom properties (--m3e-sys-window-*) and there are no margin tokens:
  *   - breakpoints are the M3 window size classes (compact < 600 ≤ medium < 840 ≤ expanded
  *     < 1200 ≤ large < 1600 ≤ extra-large);
  *   - page margins grow with the viewport (vw) above expanded instead of capping a max width.
@@ -13,7 +13,6 @@
 
 @import '@kyralabs/m3e-tokens/fonts.css';
 @import '@kyralabs/m3e-tokens/tokens.css';
-@import '@kyralabs/m3e-tokens/components/outlined-text-field.css';
 @import '@kyralabs/m3e-css/state-layer.css';
 @import '@kyralabs/m3e-css/focus-ring.css';
 @import '@kyralabs/m3e-css/icon.css';
@@ -23,6 +22,8 @@
 @import '@kyralabs/m3e-css/top-app-bar.css';
 @import '@kyralabs/m3e-css/short-navigation-bar.css';
 @import '@kyralabs/m3e-css/loading-indicator.css';
+@import '@kyralabs/m3e-css/text-field.css';
+@import '@kyralabs/m3e-css/snackbar.css';
 @import './generated/theme.css';
 @import './generated/icons.css';
 
@@ -106,19 +107,11 @@
     color: var(--m3e-sys-color-on-primary);
   }
 
-  /* Plain links and the form field; components bring their own focus ring (focus-ring.css). */
-  :where(a:not([class*='m3e-']), input):focus-visible {
+  /* Plain links; components bring their own focus ring (focus-ring.css) and the text field its
+     own focused outline. */
+  :where(a:not([class*='m3e-'])):focus-visible {
     outline: var(--m3e-sys-state-focus-indicator-thickness) solid var(--m3e-sys-color-secondary);
     outline-offset: var(--m3e-sys-state-focus-indicator-outer-offset);
-  }
-
-  .visually-hidden {
-    position: absolute;
-    inline-size: var(--m3e-comp-divider-thickness); /* 1px: screen-reader-only box */
-    block-size: var(--m3e-comp-divider-thickness);
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
   }
 
   .skip-link {
@@ -205,6 +198,13 @@
     z-index: 2;
     inset-inline: 0;
     inset-block-end: 0;
+  }
+
+  /* The waitlist result snackbar, above the navigation bar while the bar shows (below 840px). */
+  @media (width < 840px) {
+    .site-snackbars {
+      --m3e-comp-snackbar-host-bottom-offset: var(--m3e-comp-navigation-bar-container-height);
+    }
   }
 
   /* ---- Sections ---------------------------------------------------------------------------- */
@@ -318,7 +318,6 @@
   }
 
   .waitlist-note,
-  .form-status,
   .mock-balance-label,
   .mock-row__sub,
   .bill-item__due,
@@ -521,45 +520,10 @@
     inline-size: 100%;
   }
 
-  /* An outlined text field built from its component tokens (no text field in m3e-css yet). */
-  .waitlist-input {
-    inline-size: 100%;
-    min-block-size: var(--m3e-comp-outlined-text-field-container-height);
-    padding-inline: var(--m3e-sys-space-200);
-    border: var(--m3e-comp-outlined-text-field-outline-width) solid
-      var(--m3e-comp-outlined-text-field-outline-color);
-    border-radius: var(--m3e-comp-outlined-text-field-container-shape);
-    background-color: transparent;
-    color: var(--m3e-comp-outlined-text-field-input-color);
-    font-family: var(--m3e-comp-outlined-text-field-input-font);
-    font-size: var(--m3e-comp-outlined-text-field-input-size);
-    font-weight: var(--m3e-comp-outlined-text-field-input-weight);
-    line-height: var(--m3e-comp-outlined-text-field-input-line-height);
-    letter-spacing: var(--m3e-comp-outlined-text-field-input-tracking);
-    caret-color: var(--m3e-comp-outlined-text-field-caret-color);
-  }
-
-  .waitlist-input::placeholder {
-    color: var(--m3e-comp-outlined-text-field-input-placeholder-color);
-  }
-
-  .waitlist-input:hover {
-    border-color: var(--m3e-comp-outlined-text-field-outline-color-hover);
-  }
-
-  .waitlist-input:focus-visible {
-    border-color: var(--m3e-comp-outlined-text-field-outline-color-focus);
-    box-shadow: inset 0 0 0
-      calc(
-        var(--m3e-comp-outlined-text-field-outline-width-focus) -
-          var(--m3e-comp-outlined-text-field-outline-width)
-      )
-      var(--m3e-comp-outlined-text-field-outline-color-focus);
-    outline: none;
-  }
-
-  .form-status {
-    min-block-size: var(--m3e-sys-typescale-body-medium-line-height);
+  /* The m3e outlined text field; inside the centred .stack its label and text stay start-aligned. */
+  .waitlist-field {
+    min-inline-size: 0;
+    text-align: start;
   }
 
   /* The LoadingIndicator at the button's icon size, in the button's content colour. */
@@ -693,9 +657,10 @@
       padding-inline: 10%;
     }
 
+    /* The button lines up with the field's container (both 56dp); error text runs underneath. */
     .waitlist-form {
       grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
+      align-items: start;
     }
 
     .footer-top {
