@@ -2,12 +2,17 @@
  * spenzia.kyralabs.dev on @kyralabs Material 3 Expressive (m3exp-web 1.7), same system as
  * kyralabs.dev.
  *
+ * Layout follows m3.material.io (measured 2026-10-20): a two-pane hero, a text pane next to an
+ * expressive art pane (colour roles + Material shapes), 8dp between panes, extra-large corners,
+ * content sections on the page surface with display-scale titles, and tonal (unshadowed) cards.
+ *
  * Tokens only: every colour, size, duration, easing, radius and type value is a var(--m3e-…)
  * token; stylelint.config.js enforces the library's own rules here. Exceptions, because media
- * queries can't read custom properties (--m3e-sys-window-*) and there are no margin tokens:
- *   - breakpoints are the M3 window size classes (compact < 600 ≤ medium < 840 ≤ expanded
- *     < 1200 ≤ large < 1600 ≤ extra-large);
- *   - page margins grow with the viewport (vw) above expanded instead of capping a max width.
+ * queries can't read custom properties (--m3e-sys-window-*): the breakpoints are the M3 window
+ * size classes (compact < 600 ≤ medium < 840 ≤ expanded < 1200 ≤ large < 1600 ≤ extra-large).
+ *
+ * Cascade: browser resets < library layers < site. Site rules are layered too, so they never
+ * win over a component's own states by accident of specificity.
  */
 @layer reset, m3e.tokens, m3e.base, m3e.components, site;
 
@@ -72,16 +77,16 @@
 @layer site {
   :root {
     /*
-     * Pane hierarchy (as in Google's apps): the app bar, navigation and footer sit on the outer
-     * surface; each section is a pane on surface-container-low with large corners; cards inside
-     * a pane step up to surface-container-high.
-     * --_gutter: outer margin (M3 compact 16dp, medium 24dp, wider from large).
+     * --_gutter: the window margin (M3: 16dp compact, 24dp from medium).
+     * --_gap: the space between panes (8dp, as m3.material.io and Google's apps).
+     * --_pane-padding: inside a pane (m3.material.io's hero: 56dp).
+     * --_block-space: above and below a section that sits on the page surface.
      */
     --_gutter: var(--m3e-sys-space-200);
-    --_pane-gap: var(--m3e-sys-space-150);
+    --_gap: var(--m3e-sys-space-100);
     --_pane-padding: var(--m3e-sys-space-300);
     --_pane-shape: var(--m3e-sys-shape-corner-extra-large);
-    --_section-space: var(--m3e-sys-space-600);
+    --_block-space: var(--m3e-sys-space-800);
     --_card-padding: var(--m3e-sys-space-300);
 
     scroll-padding-block-start: var(--m3e-comp-app-bar-small-container-height);
@@ -207,61 +212,125 @@
     }
   }
 
-  /* ---- Sections ---------------------------------------------------------------------------- */
+  /* ---- Page structure: panes and blocks --------------------------------------------------- */
 
   main {
     display: grid;
-    gap: var(--_pane-gap);
+    gap: var(--_gap);
+    max-inline-size: var(--m3e-sys-window-width-extra-large);
+    margin-inline: auto;
     padding-inline: var(--_gutter);
   }
 
-  /* A pane: one page section on its own container surface. */
-  .section-shell,
-  .pane {
-    --m3e-comp-elevated-card-container-color: var(--m3e-sys-color-surface-container-high);
+  /* Two panes side by side from expanded (stacked before): a text pane and an art pane. */
+  .duo {
+    display: grid;
+    gap: var(--_gap);
+  }
 
-    padding-block: var(--_section-space);
-    padding-inline: var(--_pane-padding);
+  .pane {
+    position: relative;
+    padding: var(--_pane-padding);
     border-radius: var(--_pane-shape);
+  }
+
+  .pane--text {
+    display: grid;
+    gap: var(--m3e-sys-space-200);
+    align-content: center;
+    justify-items: start;
     background-color: var(--m3e-sys-color-surface-container-low);
   }
 
-  .hero {
-    display: grid;
-    align-items: center;
-    min-block-size: calc(
-      100svh - var(--m3e-comp-app-bar-small-container-height) - var(--_pane-gap)
-    );
-  }
-
-  .split {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--m3e-sys-space-600);
-    align-items: center;
-  }
-
-  .split-copy {
-    display: grid;
-    gap: var(--m3e-sys-space-200);
-    justify-items: start;
-  }
-
-  .split-copy > p,
-  .stack > p {
+  .pane--text > p:not(.lead, .waitlist-note) {
+    max-inline-size: var(--m3e-sys-window-width-medium);
     color: var(--m3e-sys-color-on-surface-variant);
   }
 
-  /* Centered stacks ("Built by Kyra Labs", final call to action). On compact windows the pane's
-     own padding is the inset; from medium up they narrow further. */
-  .stack {
+  /* An expressive art pane: a colour role, Material shapes behind, a content card in front. */
+  .pane--art {
     display: grid;
-    gap: var(--m3e-sys-space-200);
-    justify-items: center;
-    text-align: center;
+    align-content: end;
+    min-block-size: calc(var(--m3e-sys-window-height-medium) - var(--m3e-sys-space-800));
+    overflow: clip;
+    isolation: isolate;
   }
 
-  /* ---- Type (M3 typescale; emphasized styles for headings) ----------------------------- */
+  .art--primary {
+    --_shape-a: var(--m3e-sys-color-primary-fixed);
+    --_shape-b: var(--m3e-sys-color-tertiary-fixed);
+    --_shape-c: var(--m3e-sys-color-on-primary-fixed-variant);
+    --_shape-d: var(--m3e-sys-color-primary-fixed-dim);
+
+    background-color: var(--m3e-sys-color-primary-container);
+  }
+
+  .art--secondary {
+    --_shape-a: var(--m3e-sys-color-primary-fixed);
+    --_shape-b: var(--m3e-sys-color-on-secondary-fixed-variant);
+    --_shape-c: var(--m3e-sys-color-tertiary-fixed);
+
+    background-color: var(--m3e-sys-color-secondary-container);
+  }
+
+  .art--tertiary {
+    --_shape-a: var(--m3e-sys-color-tertiary-fixed);
+    --_shape-b: var(--m3e-sys-color-on-tertiary-fixed-variant);
+    --_shape-c: var(--m3e-sys-color-tertiary-fixed-dim);
+
+    background-color: var(--m3e-sys-color-tertiary-container);
+  }
+
+  .art--neutral {
+    background-color: var(--m3e-sys-color-surface-container-high);
+  }
+
+  .art-shape {
+    position: absolute;
+    z-index: -1;
+    block-size: auto;
+  }
+
+  .art-shape--a {
+    inset-block-start: -12%;
+    inset-inline-end: -14%;
+    inline-size: 72%;
+    color: var(--_shape-a);
+  }
+
+  .art-shape--b {
+    inset-block-start: 8%;
+    inset-inline-start: 6%;
+    inline-size: 30%;
+    color: var(--_shape-b);
+  }
+
+  .art-shape--c {
+    inset-block-start: 38%;
+    inset-inline-end: 8%;
+    inline-size: 18%;
+    color: var(--_shape-c);
+  }
+
+  .art-shape--d {
+    inset-block-start: 4%;
+    inset-inline-start: 44%;
+    inline-size: 12%;
+    color: var(--_shape-d);
+  }
+
+  /* A section on the page surface: its text lines up with the panes' text. */
+  .block {
+    display: grid;
+    gap: var(--m3e-sys-space-600);
+    padding-block: var(--_block-space);
+    padding-inline: var(--_pane-padding);
+  }
+
+
+
+
+  /* ---- Type (M3 typescale, emphasized for headings) --------------------------------------- */
 
   h1 {
     font-family: var(--m3e-sys-typescale-display-medium-emphasized-font);
@@ -271,20 +340,7 @@
     letter-spacing: var(--m3e-sys-typescale-display-medium-emphasized-tracking);
   }
 
-  /*
-   * Section titles use the headline styles; display is only for the hero. The two centred
-   * statements (h2.display: "Built by Kyra Labs", the final call to action) take headline large
-   * at every size, one step above the feature titles on compact and medium windows.
-   */
   h2 {
-    font-family: var(--m3e-sys-typescale-headline-medium-emphasized-font);
-    font-size: var(--m3e-sys-typescale-headline-medium-emphasized-size);
-    font-weight: var(--m3e-sys-typescale-headline-medium-emphasized-weight);
-    line-height: var(--m3e-sys-typescale-headline-medium-emphasized-line-height);
-    letter-spacing: var(--m3e-sys-typescale-headline-medium-emphasized-tracking);
-  }
-
-  h2.display {
     font-family: var(--m3e-sys-typescale-headline-large-emphasized-font);
     font-size: var(--m3e-sys-typescale-headline-large-emphasized-size);
     font-weight: var(--m3e-sys-typescale-headline-large-emphasized-weight);
@@ -292,13 +348,23 @@
     letter-spacing: var(--m3e-sys-typescale-headline-large-emphasized-tracking);
   }
 
+  h3 {
+    font-family: var(--m3e-sys-typescale-headline-small-emphasized-font);
+    font-size: var(--m3e-sys-typescale-headline-small-emphasized-size);
+    font-weight: var(--m3e-sys-typescale-headline-small-emphasized-weight);
+    line-height: var(--m3e-sys-typescale-headline-small-emphasized-line-height);
+    letter-spacing: var(--m3e-sys-typescale-headline-small-emphasized-tracking);
+  }
+
   h1,
-  h2 {
+  h2,
+  h3 {
     overflow-wrap: anywhere;
     text-wrap: balance;
   }
 
   .lead {
+    max-inline-size: var(--m3e-sys-window-width-medium);
     color: var(--m3e-sys-color-on-surface-variant);
     font-family: var(--m3e-sys-typescale-title-large-font);
     font-size: var(--m3e-sys-typescale-title-large-size);
@@ -307,15 +373,17 @@
     letter-spacing: var(--m3e-sys-typescale-title-large-tracking);
   }
 
+  /* The small label above a heading: quiet, so the headline carries the hierarchy. */
   .eyebrow,
   .footer-col h2 {
-    color: var(--m3e-sys-color-primary);
+    color: var(--m3e-sys-color-on-surface-variant);
     font-family: var(--m3e-sys-typescale-label-large-emphasized-font);
     font-size: var(--m3e-sys-typescale-label-large-emphasized-size);
     font-weight: var(--m3e-sys-typescale-label-large-emphasized-weight);
     line-height: var(--m3e-sys-typescale-label-large-emphasized-line-height);
     letter-spacing: var(--m3e-sys-typescale-label-large-emphasized-tracking);
   }
+
 
   .waitlist-note,
   .mock-balance-label,
@@ -343,15 +411,24 @@
     text-underline-offset: var(--m3e-sys-space-50);
   }
 
+  .footer-col a,
+  .footer-bottom a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--m3e-comp-minimum-interactive-component-size);
+  }
+
+  /* ---- Rows, tags, lists ----------------------------------------------------------------- */
+
   .action-row {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--m3e-sys-space-150);
+    gap: var(--m3e-sys-space-100);
     justify-content: center;
-    margin-block-start: var(--m3e-sys-space-150);
+    margin-block-start: var(--m3e-sys-space-100);
   }
 
-  /* Static tags ("Cross-platform", …). Not chips: M3 chips are actions; these aren't. */
+  /* Static tags ("Cross-platform", …), tonal. Not chips: M3 chips are actions; these aren't. */
   .tag-row {
     display: flex;
     flex-wrap: wrap;
@@ -364,9 +441,9 @@
     align-items: center;
     min-block-size: var(--m3e-sys-space-400);
     padding-inline: var(--m3e-sys-space-200);
-    border: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
     border-radius: var(--m3e-sys-shape-corner-small);
-    color: var(--m3e-sys-color-on-surface-variant);
+    background-color: var(--m3e-sys-color-secondary-container);
+    color: var(--m3e-sys-color-on-secondary-container);
     font-family: var(--m3e-sys-typescale-label-large-font);
     font-size: var(--m3e-sys-typescale-label-large-size);
     font-weight: var(--m3e-sys-typescale-label-large-weight);
@@ -374,20 +451,48 @@
     letter-spacing: var(--m3e-sys-typescale-label-large-tracking);
   }
 
-  /* ---- Hero: app icon, phone mock ------------------------------------------------------ */
+  /* M3 Expressive segmented list: rows 2dp apart, large corners on the outer rows only. */
+  .seg-list {
+    display: grid;
+    gap: var(--m3e-sys-space-25);
+  }
 
+  .seg-list > * {
+    border-radius: var(--m3e-sys-shape-corner-extra-small);
+    background-color: var(--m3e-sys-color-surface-container-high);
+  }
+
+  .seg-list > :first-child {
+    border-start-start-radius: var(--m3e-sys-shape-corner-large-increased);
+    border-start-end-radius: var(--m3e-sys-shape-corner-large-increased);
+  }
+
+  .seg-list > :last-child {
+    border-end-start-radius: var(--m3e-sys-shape-corner-large-increased);
+    border-end-end-radius: var(--m3e-sys-shape-corner-large-increased);
+  }
+
+  /* ---- Cards ------------------------------------------------------------------------------ */
+
+  /* A card in front of an art pane: the lowest surface, so it reads against any colour role. */
+  .art-card {
+    --m3e-comp-filled-card-container-color: var(--m3e-sys-color-surface-container-lowest);
+    --m3e-comp-filled-card-container-shape: var(--m3e-sys-shape-corner-extra-large);
+
+    padding: var(--_card-padding);
+    color: var(--m3e-sys-color-on-surface);
+  }
+
+  /* Hero: app icon, phone mock */
   .app-icon-tile {
     inline-size: var(--m3e-sys-space-900);
     block-size: var(--m3e-sys-space-900);
-    border-radius: var(--m3e-sys-shape-corner-large);
+    border-radius: var(--m3e-sys-shape-corner-large-increased);
   }
 
   .phone-frame {
     display: grid;
     gap: var(--m3e-sys-space-150);
-    inline-size: 100%;
-    padding: var(--_card-padding);
-    justify-self: center;
   }
 
   .mock-balance {
@@ -416,9 +521,9 @@
     gap: var(--m3e-sys-space-200);
     align-items: center;
     justify-content: space-between;
-    padding: var(--m3e-sys-space-200);
-    border-radius: var(--m3e-sys-shape-corner-medium);
-    background-color: var(--m3e-sys-color-surface-container-lowest);
+    min-block-size: var(--m3e-sys-space-800);
+    padding-block: var(--m3e-sys-space-150);
+    padding-inline: var(--m3e-sys-space-200);
   }
 
   .mock-row__label,
@@ -435,12 +540,7 @@
     white-space: nowrap;
   }
 
-  /* ---- Feature cards ------------------------------------------------------------------- */
-
-  .feature-media {
-    padding: var(--_card-padding);
-  }
-
+  /* Budgets */
   .budget-list {
     display: grid;
     gap: var(--m3e-sys-space-300);
@@ -454,7 +554,7 @@
   }
 
   .budget-track {
-    block-size: var(--m3e-sys-space-100);
+    block-size: var(--m3e-sys-space-150);
     overflow: clip;
     border-radius: var(--m3e-sys-shape-corner-full);
     background-color: var(--m3e-sys-color-surface-container-highest);
@@ -468,6 +568,7 @@
     background-color: var(--m3e-sys-color-primary);
   }
 
+  /* Chart */
   .chart-mock {
     display: grid;
     grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -478,7 +579,7 @@
 
   .chart-mock__bar {
     block-size: var(--_value);
-    border-radius: var(--m3e-sys-shape-corner-small);
+    border-radius: var(--m3e-sys-shape-corner-medium);
     background-color: var(--m3e-sys-color-secondary-container);
   }
 
@@ -494,12 +595,15 @@
     text-align: center;
   }
 
+  /* Bills */
   .bill-item {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     gap: var(--m3e-sys-space-200);
     align-items: center;
+    min-block-size: var(--m3e-sys-space-900);
     padding-block: var(--m3e-sys-space-150);
+    padding-inline: var(--m3e-sys-space-200);
   }
 
   .bill-item__icon {
@@ -512,7 +616,34 @@
     color: var(--m3e-sys-color-on-primary-container);
   }
 
-  /* ---- Waitlist (island in src/islands/WaitlistForm.tsx) ----------------------------- */
+  /* Centred statement ("Built by Kyra Labs"), on the page surface. */
+  .stack {
+    display: grid;
+    gap: var(--m3e-sys-space-200);
+    justify-items: center;
+    max-inline-size: var(--m3e-sys-window-width-expanded);
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .stack > p {
+    color: var(--m3e-sys-color-on-surface-variant);
+  }
+
+  .stack__shape {
+    inline-size: var(--m3e-sys-space-900);
+    block-size: var(--m3e-sys-space-900);
+    margin-block-end: var(--m3e-sys-space-200);
+    color: var(--m3e-sys-color-primary);
+  }
+
+  /* ---- Waitlist (island in src/islands/WaitlistForm.tsx) ---------------------------------- */
+
+  .pane--form {
+    display: grid;
+    align-content: center;
+    background-color: var(--m3e-sys-color-surface-container-high);
+  }
 
   .waitlist-form {
     display: grid;
@@ -520,7 +651,6 @@
     inline-size: 100%;
   }
 
-  /* The m3e outlined text field; inside the centred .stack its label and text stay start-aligned. */
   .waitlist-field {
     min-inline-size: 0;
     text-align: start;
@@ -535,17 +665,15 @@
     display: inline-flex;
   }
 
-  .stack .waitlist-form {
-    justify-self: stretch;
-  }
-
-  /* ---- Footer ------------------------------------------------------------------------------ */
+  /* ---- Footer ----------------------------------------------------------------------------- */
 
   .site-footer {
     display: grid;
     gap: var(--m3e-sys-space-600);
-    padding-block: var(--m3e-sys-space-600) var(--m3e-sys-space-400);
-    padding-inline: var(--_gutter);
+    max-inline-size: var(--m3e-sys-window-width-extra-large);
+    margin-inline: auto;
+    padding-block: var(--_block-space) var(--m3e-sys-space-400);
+    padding-inline: calc(var(--_gutter) + var(--_pane-padding));
   }
 
   .footer-top {
@@ -571,12 +699,6 @@
     justify-items: start;
   }
 
-  .footer-col a {
-    display: inline-flex;
-    align-items: center;
-    min-block-size: var(--m3e-comp-minimum-interactive-component-size);
-  }
-
   .footer-bottom {
     display: flex;
     flex-wrap: wrap;
@@ -585,16 +707,17 @@
     justify-content: space-between;
   }
 
-  .footer-bottom a {
-    display: inline-flex;
-    align-items: center;
-    min-block-size: var(--m3e-comp-minimum-interactive-component-size);
-  }
-
-  /* ---- Privacy page ------------------------------------------------------------------------ */
+  /* ---- Privacy page ----------------------------------------------------------------------- */
 
   .legal-page {
-    grid-template-columns: minmax(0, 1fr);
+    padding-block-end: var(--_gap);
+  }
+
+  .legal {
+    inline-size: 100%;
+    max-inline-size: var(--m3e-sys-window-width-expanded);
+    justify-self: center;
+    background-color: var(--m3e-sys-color-surface-container-low);
   }
 
   .legal > * + * {
@@ -638,23 +761,18 @@
 
   .callout {
     padding: var(--m3e-sys-space-300);
-    border: var(--m3e-comp-divider-thickness) solid var(--m3e-sys-color-outline-variant);
-    border-radius: var(--m3e-sys-shape-corner-large);
-    background-color: var(--m3e-sys-color-surface-container-lowest);
+    border-radius: var(--m3e-sys-shape-corner-large-increased);
+    background-color: var(--m3e-sys-color-secondary-container);
+    color: var(--m3e-sys-color-on-secondary-container);
   }
 
-  /* ---- Window size classes ----------------------------------------------------------------- */
+  /* ---- Window size classes ---------------------------------------------------------------- */
 
   @media (width >= 600px) {
     :root {
       --_gutter: var(--m3e-sys-space-300);
-      --_pane-gap: var(--m3e-sys-space-200);
       --_pane-padding: var(--m3e-sys-space-600);
-      --_section-space: var(--m3e-sys-space-800);
-    }
-
-    .stack {
-      padding-inline: 10%;
+      --_card-padding: var(--m3e-sys-space-400);
     }
 
     /* The button lines up with the field's container (both 56dp); error text runs underneath. */
@@ -670,11 +788,9 @@
 
   @media (width >= 840px) {
     :root {
-      --_gutter: var(--m3e-sys-space-300);
-      --_pane-padding: 6vw;
+      --_pane-padding: var(--m3e-sys-space-700);
       --_pane-shape: var(--m3e-sys-shape-corner-extra-large-increased);
-      --_section-space: calc(var(--m3e-sys-space-900) + var(--m3e-sys-space-400));
-      --_card-padding: var(--m3e-sys-space-400);
+      --_block-space: calc(var(--m3e-sys-space-900) + var(--m3e-sys-space-400));
     }
 
     /* The top app bar shows the destinations; the navigation bar goes. */
@@ -699,79 +815,78 @@
     }
 
     h2 {
-      font-family: var(--m3e-sys-typescale-headline-large-emphasized-font);
-      font-size: var(--m3e-sys-typescale-headline-large-emphasized-size);
-      font-weight: var(--m3e-sys-typescale-headline-large-emphasized-weight);
-      line-height: var(--m3e-sys-typescale-headline-large-emphasized-line-height);
-      letter-spacing: var(--m3e-sys-typescale-headline-large-emphasized-tracking);
+      font-family: var(--m3e-sys-typescale-display-small-emphasized-font);
+      font-size: var(--m3e-sys-typescale-display-small-emphasized-size);
+      font-weight: var(--m3e-sys-typescale-display-small-emphasized-weight);
+      line-height: var(--m3e-sys-typescale-display-small-emphasized-line-height);
+      letter-spacing: var(--m3e-sys-typescale-display-small-emphasized-tracking);
     }
 
-    .split {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: var(--m3e-sys-space-900);
+
+    .duo {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    /* Phone mock first in the DOM (as before), copy first on screen. */
-    .split--hero {
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    .duo--reverse > .pane--text {
+      order: 2;
     }
 
-    .split--hero .split-copy {
-      grid-row: 1;
-      grid-column: 1;
+    .hero {
+      min-block-size: calc(
+        100svh - var(--m3e-comp-app-bar-small-container-height) - var(--_gap)
+      );
     }
 
-    .stack {
-      padding-inline: 20%;
-    }
-
-    .legal-page {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 6fr) minmax(0, 1fr);
-    }
-
-    .legal {
-      grid-column: 2;
-    }
   }
 
   @media (width >= 1200px) {
-    :root {
-      --_gutter: 6vw;
-      --_pane-padding: 7vw;
+    /* m3.material.io sets its hero headline at 96px: display large + display small (93px). */
+    .hero h1 {
+      font-size: calc(
+        var(--m3e-sys-typescale-display-large-emphasized-size) +
+          var(--m3e-sys-typescale-display-small-emphasized-size)
+      );
+      line-height: 1;
     }
 
-    .legal-page {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 3fr) minmax(0, 1fr);
+    h2 {
+      font-family: var(--m3e-sys-typescale-display-medium-emphasized-font);
+      font-size: var(--m3e-sys-typescale-display-medium-emphasized-size);
+      font-weight: var(--m3e-sys-typescale-display-medium-emphasized-weight);
+      line-height: var(--m3e-sys-typescale-display-medium-emphasized-line-height);
+      letter-spacing: var(--m3e-sys-typescale-display-medium-emphasized-tracking);
+    }
+
+    h2.display {
+      font-family: var(--m3e-sys-typescale-display-large-emphasized-font);
+      font-size: var(--m3e-sys-typescale-display-large-emphasized-size);
+      font-weight: var(--m3e-sys-typescale-display-large-emphasized-weight);
+      line-height: var(--m3e-sys-typescale-display-large-emphasized-line-height);
+      letter-spacing: var(--m3e-sys-typescale-display-large-emphasized-tracking);
     }
   }
 
-  @media (width >= 1600px) {
-    :root {
-      --_gutter: 12vw;
-    }
-  }
-
-  /* ---- Motion ------------------------------------------------------------------------------ */
+  /* ---- Motion ----------------------------------------------------------------------------- */
 
   /*
-   * All motion uses the --m3e-sys-motion-* spring tokens and transform/opacity only (no layout
-   * shift), and none of it runs under prefers-reduced-motion.
+   * All motion uses the --m3e-sys-motion-* tokens and transform/opacity only (no layout shift),
+   * and none of it runs under prefers-reduced-motion.
    *
-   * - Entrance on load: the hero copy, then the phone mock, rise into place. Transform only, so
-   *   nothing is ever hidden: no-JS visitors and crawlers get the same, complete page. The copy
-   *   rises as one block because the waitlist form inside it is an island that React re-renders
-   *   on hydration (a per-item animation would replay then), and a still item under a rising
-   *   one would overlap it.
-   * - Scroll reveals (opacity + rise, CSS scroll-driven) only once src/scripts/enhance.ts has
-   *   marked the page with html.js, so without JavaScript every section is visible.
-   * - No hover lift: none of the cards has a single primary link, so none is interactive.
+   * - Entrance on load: the hero copy and the phone mock rise and the hero shapes grow into place
+   *   on the expressive spring. Transform only, so nothing is ever hidden: no-JS visitors and crawlers get the same,
+   *   complete page.
+   * - The art panes' shapes turn as they scroll through the window (scroll-driven, no JS).
+   * - Scroll reveals (opacity + rise) only once src/scripts/enhance.ts has marked the page with
+   *   html.js, so without JavaScript every section is visible.
    */
   @media (prefers-reduced-motion: no-preference) {
     html {
       scroll-behavior: smooth;
     }
 
-    .hero .split-copy,
+    /* The hero copy rises as one block: the waitlist island inside it is re-rendered on
+       hydration, so a per-item animation would replay. */
+    .hero-copy,
     .hero .phone-frame {
       animation: site-enter var(--m3e-sys-motion-spring-expressive-fast-spatial-duration)
         var(--m3e-sys-motion-spring-expressive-fast-spatial-easing) both;
@@ -781,14 +896,32 @@
       animation-delay: var(--m3e-sys-motion-duration-short2);
     }
 
+    .hero-art .art-shape path {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: site-grow var(--m3e-sys-motion-spring-expressive-default-spatial-duration)
+        var(--m3e-sys-motion-spring-expressive-default-spatial-easing) both;
+    }
+
     @supports (animation-timeline: view()) {
+      .pane--art .art-shape--a,
+      .pane--art .art-shape--c {
+        animation: site-turn auto var(--m3e-sys-motion-easing-linear) both;
+        animation-timeline: view();
+      }
+
+      .pane--art .art-shape--b {
+        animation: site-turn-back auto var(--m3e-sys-motion-easing-linear) both;
+        animation-timeline: view();
+      }
+
       .js [data-reveal] {
         animation-name: site-reveal;
         animation-duration: auto;
         animation-timing-function: var(--m3e-sys-motion-easing-emphasized-decelerate);
         animation-fill-mode: both;
         animation-timeline: view();
-        animation-range: entry 0% entry 60%;
+        animation-range: entry 0% entry 50%;
       }
     }
   }
@@ -796,6 +929,32 @@
   @keyframes site-enter {
     from {
       translate: 0 var(--m3e-sys-space-300);
+    }
+  }
+
+  @keyframes site-grow {
+    from {
+      scale: 0;
+    }
+  }
+
+  @keyframes site-turn {
+    from {
+      rotate: -0.1turn;
+    }
+
+    to {
+      rotate: 0.15turn;
+    }
+  }
+
+  @keyframes site-turn-back {
+    from {
+      rotate: 0.1turn;
+    }
+
+    to {
+      rotate: -0.15turn;
     }
   }
 
