@@ -40,7 +40,7 @@ pnpm 12.11.2 (`packageManager`), Node ≥ 22.12; `.nvmrc` is pinned to **24.21.0
 
 - 2026-10-20, **M3 Expressive redesign** (port of kyralabs.dev's, after comparing with m3.material.io, the Google blog, Google Fonts and the Workspace product pages): grey panes with shadowed cards became the duo/block system above. The hero's text now comes before the phone mock in the DOM, so phones show the headline first (it was a known gap). Copy, links, ids, meta and JSON-LD unchanged.
 
-- 2026-10-22, **SEO, site name**: the home page (only) gets one `WebSite` JSON-LD node (`@id` `https://spenzia.kyralabs.dev/#website`, name "Spenzia", `url` = the home canonical, publisher Kyra Labs) so Google shows "Spenzia" rather than falling back to kyralabs.dev's "Kyra Labs" site name; the `SoftwareApplication` publisher now carries the shared Organization `@id` `https://kyralabs.dev/#organization`. Keep exactly one `WebSite` node, on the home page, with `url` matching the canonical. Title, copy and meta unchanged.
+- 2026-10-22, **SEO, site name**: the home page (only) gets one `WebSite` JSON-LD node (`@id` `https://spenzia.kyralabs.dev/#website`, name "Spenzia", `url` = the home canonical, publisher Kyra Labs) so Google has a stated preference for "Spenzia" (a preference, not a guarantee) instead of falling back to kyralabs.dev's "Kyra Labs" site name; the `SoftwareApplication` publisher now carries the shared Organization `@id` `https://kyralabs.dev/#organization`. Keep exactly one `WebSite` node, on the home page, with `url` matching the canonical. Title, copy and meta unchanged.
 
 ## Known gaps / follow-ups
 
