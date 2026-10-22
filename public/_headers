@@ -1,0 +1,8 @@
+# noindex on the Worker's own hosts only, never on spenzia.kyralabs.dev: workers.dev (production,
+# previews, versions) and the preview aliases on spenzia-preview.kyralabs.dev. Keep these rules first:
+# Netlify's parser only knows path rules and would attach noindex to any path rule above them.
+https://:version.:subdomain.workers.dev/*
+  X-Robots-Tag: noindex
+
+https://:alias.spenzia-preview.kyralabs.dev/*
+  X-Robots-Tag: noindex
